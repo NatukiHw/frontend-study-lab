@@ -13,10 +13,9 @@ const app = new PIXI.Application({
   transparent: false,
   resolution: 1
 });
-let gameScene, gameOverScene, stage;
-let state;
+let gameScene, gameOverScene, state;
 let blobs, healthBar, message, door, explorer, treasure;
-stage = app.stage;
+const stage = app.stage;
 
 const container = ref(null);
 onMounted(() => {
@@ -24,35 +23,16 @@ onMounted(() => {
 });
 
 // 游戏资源
-import mapImage from "@/assets/treasureHunter/dungeon.png";
-
-app.loader.add(mapImage);
-import blobImage from "@/assets/treasureHunter/blob.png";
-
-app.loader.add(blobImage);
-import doorImage from "@/assets/treasureHunter/door.png";
-
-app.loader.add(doorImage);
-import treasureImage from "@/assets/treasureHunter/treasure.png";
-
-app.loader.add(treasureImage);
-import explorerImage from "@/assets/treasureHunter/explorer.png";
-
-app.loader.add(explorerImage);
-let blobTexture, mapTexture, doorTexture, treasureTexture, explorerTexture;
-
-//Setup Pixi and load the texture atlas files - call the `setup`
-//function when they've loaded
+const JSON_PATH = "/static/treasureHunter/resource.json";
+app.loader.add(JSON_PATH);
 
 app.loader.load(startup);
-
 function startup() {
-  //Initialize the game sprites, set the game `state` to `play`
-  //and start the 'gameLoop'
+  // 游戏贴图
+  const textures = app.loader.resources[JSON_PATH].textures;
   // 游戏场景
-  mapTexture = app.loader.resources[mapImage].texture;
   gameScene = new PIXI.Container();
-  const map = new PIXI.Sprite(mapTexture);
+  const map = new PIXI.Sprite(textures["dungeon.png"]);
   map.position.set(0, 0);
   gameScene.addChild(map);
   stage.addChild(gameScene);
@@ -70,26 +50,22 @@ function startup() {
   gameOverScene.addChild(message);
   stage.addChild(gameOverScene);
   // 生成猎人
-  explorerTexture = app.loader.resources[explorerImage].texture;
-  explorer = new PIXI.Sprite(explorerTexture);
+  explorer = new PIXI.Sprite(textures["explorer.png"]);
   explorer.x = 68;
   explorer.y = gameScene.height / 2 - explorer.height / 2;
   explorer.vx = 0;
   explorer.vy = 0;
   gameScene.addChild(explorer);
   // 生成出口
-  doorTexture = app.loader.resources[doorImage].texture;
-  door = new PIXI.Sprite(doorTexture);
+  door = new PIXI.Sprite(textures["door.png"]);
   door.position.set(32, 0);
   gameScene.addChild(door);
   // 生成宝藏
-  treasureTexture = app.loader.resources[treasureImage].texture;
-  treasure = new PIXI.Sprite(treasureTexture);
+  treasure = new PIXI.Sprite(textures["treasure.png"]);
   treasure.x = gameScene.width - treasure.width - 48;
   treasure.y = gameScene.height / 2 - treasure.height / 2;
   gameScene.addChild(treasure);
   // 生成怪物
-  blobTexture = app.loader.resources[blobImage].texture;
   const numberOfBlobs = 6,
     spacing = 48,
     xOffset = 150,
@@ -97,7 +73,7 @@ function startup() {
   let direction = 1;
   blobs = [];
   for (let i = 0; i < numberOfBlobs; i++) {
-    const blob = new PIXI.Sprite(blobTexture);
+    const blob = new PIXI.Sprite(textures["blob.png"]);
     const x = spacing * i + xOffset;
     const y = randomInt(0, app.stage.height - blob.height);
     blob.x = x;
@@ -124,60 +100,33 @@ function startup() {
   healthBar.outer = outerBar;
   gameScene.addChild(healthBar);
   // 键盘事件监听
-  //Capture the keyboard arrow keys
   const left = keyboard(37),
     up = keyboard(38),
     right = keyboard(39),
     down = keyboard(40);
-
-  //Left arrow key `press` method
   left.press = function () {
-    //Change the explorer's velocity when the key is pressed
     explorer.vx = -2;
-    explorer.vy = 0;
   };
-
-  //Left arrow key `release` method
   left.release = function () {
-    //If the left arrow has been released, and the right arrow isn't down,
-    //and the explorer isn't moving vertically:
-    //Stop the explorer
-    if (!right.isDown && explorer.vy === 0) {
-      explorer.vx = 0;
-    }
+    explorer.vx = 0;
   };
-
-  //Up
   up.press = function () {
     explorer.vy = -2;
-    explorer.vx = 0;
   };
   up.release = function () {
-    if (!down.isDown && explorer.vx === 0) {
-      explorer.vy = 0;
-    }
-  };
-
-  //Right
-  right.press = function () {
-    explorer.vx = 2;
     explorer.vy = 0;
   };
-  right.release = function () {
-    if (!left.isDown && explorer.vy === 0) {
-      explorer.vx = 0;
-    }
+  right.press = function () {
+    explorer.vx = 2;
   };
-
-  //Down
-  down.press = function () {
-    explorer.vy = 2;
+  right.release = function () {
     explorer.vx = 0;
   };
+  down.press = function () {
+    explorer.vy = 2;
+  };
   down.release = function () {
-    if (!up.isDown && explorer.vx === 0) {
-      explorer.vy = 0;
-    }
+    explorer.vy = 0;
   };
   // 启动游戏循环
   state = play;
@@ -185,7 +134,6 @@ function startup() {
 }
 
 function gameLoop(delta) {
-  //Runs the current game `state` in a loop and renders the sprites
   state(delta);
 }
 
