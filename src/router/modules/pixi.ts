@@ -18,6 +18,14 @@ export default {
       meta: {
         title: "宝藏猎人"
       }
+    },
+    {
+      path: "/kofExample",
+      name: "kofExample",
+      component: () => import("@/views/pixi/kofExample.vue"),
+      meta: {
+        title: "拳皇-动画精灵"
+      }
     }
   ]
 } as RouteConfigsTable;
