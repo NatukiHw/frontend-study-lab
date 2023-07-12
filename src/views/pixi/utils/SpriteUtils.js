@@ -6,11 +6,11 @@ import * as PIXI from "pixi.js";
  * @returns {PIXI.AnimatedSprite}
  */
 const createAnimatedSpriteFromTextures = textures => {
-  const bgTexturesNew = [];
+  const texturesNew = [];
   for (const key in textures) {
-    bgTexturesNew.push(textures[key]);
+    texturesNew.push(textures[key]);
   }
-  return new PIXI.AnimatedSprite(bgTexturesNew);
+  return new PIXI.AnimatedSprite(texturesNew);
 };
 
 export { createAnimatedSpriteFromTextures };

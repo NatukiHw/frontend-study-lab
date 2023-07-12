@@ -27,12 +27,15 @@ onMounted(() => {
 const initResource = (() => {
   const RESOURCE_BASE_PATH = "/static/kofExample";
   const BACKGROUND_JSON = `${RESOURCE_BASE_PATH}/bg.json`;
-  const STAND_JSON = `${RESOURCE_BASE_PATH}/stand.json`;
+  const PLAYER_STAND_JSON = `${RESOURCE_BASE_PATH}/stand.json`;
   return {
     RESOURCE_BASE_PATH,
     BACKGROUND_JSON,
+    PLAYER_STAND_JSON,
     init() {
-      loader.add(BACKGROUND_JSON);
+      loader
+        .add(BACKGROUND_JSON)
+        .add(PLAYER_STAND_JSON);
     }
   };
 })();
@@ -42,18 +45,30 @@ initResource.init();
  */
 const initSprite = (() => {
   let bgSprite;
+  let playerSprite;
   return {
     bgSprite,
+    playerSprite,
     renderBackground() {
-      const bgTextures =
-        loader.resources[initResource.BACKGROUND_JSON].textures;
-      initResource.bgSprite = createAnimatedSpriteFromTextures(bgTextures);
-      const bgSprite = initResource.bgSprite;
+      const bgTextures = loader.resources[initResource.BACKGROUND_JSON].textures;
+      bgSprite = createAnimatedSpriteFromTextures(bgTextures);
       bgSprite.width = CONTAINER_WIDTH;
       bgSprite.height = CONTAINER_HEIGHT;
       bgSprite.animationSpeed = 0.1;
       bgSprite.play();
       stage.addChild(bgSprite);
+    },
+    renderPlayer() {
+      const playerContainer = new PIXI.Container();
+      const playerTextures = loader.resources[initResource.PLAYER_STAND_JSON].textures;
+      playerSprite = createAnimatedSpriteFromTextures(playerTextures)
+      playerSprite.width = 120;
+      playerSprite.height = 165;
+      playerSprite.animationSpeed = 0.3
+      playerSprite.play();
+      playerContainer.addChild(playerSprite);
+      playerContainer.y = 410
+      stage.addChild(playerContainer);
     }
   };
 })();
@@ -62,6 +77,7 @@ const initSprite = (() => {
  */
 loader.load(() => {
   initSprite.renderBackground();
+  initSprite.renderPlayer();
 });
 </script>
 
