@@ -1,16 +1,5 @@
 <template>
   <div class="container">
-    <!-- 节点面板 -->
-    <!--    <div class="node_panel">-->
-    <!--      <div v-for="item in nodeList" :key="item" class="node_li">-->
-    <!--        <div-->
-    <!--          :class="['item_shape', item]"-->
-    <!--          draggable="true"-->
-    <!--          @dragend="addNode(item, $event)"-->
-    <!--        />-->
-    <!--        <div>{{ item }}</div>-->
-    <!--      </div>-->
-    <!--    </div>-->
     <div class="nodePanel">
       <div class="panelTitle">节点面板</div>
       <div class="panelContent">
@@ -339,28 +328,5 @@ onMounted(() => {
       }
     }
   }
-}
-
-.node_li {
-  margin-bottom: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 20px;
-  user-select: none;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
-.item_shape {
-  width: 20px;
-  height: 20px;
-  border: 1px solid #ccc;
-}
-
-.circle {
-  border-radius: 50%;
 }
 </style>
