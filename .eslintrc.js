@@ -110,11 +110,6 @@ module.exports = {
         varsIgnorePattern: "^_"
       }
     ],
-    "prettier/prettier": [
-      "error",
-      {
-        endOfLine: "auto"
-      }
-    ]
+    "prettier/prettier": "off"
   }
 };
