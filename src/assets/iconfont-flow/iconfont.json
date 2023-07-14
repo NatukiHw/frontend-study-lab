@@ -1,0 +1,37 @@
+{
+  "id": "4167901",
+  "name": "g6流程示例",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "21823755",
+      "name": "finished",
+      "font_class": "finished",
+      "unicode": "e668",
+      "unicode_decimal": 58984
+    },
+    {
+      "icon_id": "16546851",
+      "name": "执行脚本",
+      "font_class": "zhihangjiaoben",
+      "unicode": "e74c",
+      "unicode_decimal": 59212
+    },
+    {
+      "icon_id": "23512765",
+      "name": "部署",
+      "font_class": "bushu",
+      "unicode": "e86d",
+      "unicode_decimal": 59501
+    },
+    {
+      "icon_id": "33048397",
+      "name": "line_round_start",
+      "font_class": "line_round_start",
+      "unicode": "e629",
+      "unicode_decimal": 58921
+    }
+  ]
+}

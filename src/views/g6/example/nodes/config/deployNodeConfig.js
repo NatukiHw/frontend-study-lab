@@ -1,9 +1,9 @@
-const ICON_URL = '/static/g6example/line_round_start.svg'
+const ICON_URL = '/static/g6example/bushu.svg'
 const node = {
-  type: "startNode",
+  type: "deployNode",
   config: {
     drawShape(cfg, group) {
-      const color = "#30BF78";
+      const color = "#9621a2";
       const radius = 2;
       const shape = group.addShape("rect", {
         attrs: {
@@ -117,5 +117,5 @@ const node = {
 };
 
 export {
-  node as StartNodeConfig
+  node as DeployNodeConfig
 }
