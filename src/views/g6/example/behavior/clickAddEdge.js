@@ -11,8 +11,24 @@ const behavior = {
       return {
         "node:click": "onNodeClick",
         "mousemove": "onMousemove",
-        "edge:click": "onEdgeClick"
+        "edge:click": "onEdgeClick",
+        "connector:click": "onConnectorClick"
       };
+    },
+    onConnectorClick(ev) {
+      const node = ev.item;
+      const graph = this.graph;
+      const model = node.getModel();
+      if (!this.isAdding) {
+        // 开始添加边
+        this.addingEdge = graph.addItem("edge", {
+          source: model.id,
+          target: model.id
+        });
+        this.startNode = node;
+        this.isAdding = true;
+      }
+      ev.stopPropagation()
     },
     onNodeClick(ev) {
       const node = ev.item;
@@ -42,14 +58,6 @@ const behavior = {
         graph.removeItem(this.addingEdge);
         this.addingEdge = null;
         this.isAdding = false;
-      } else {
-        // 开始添加边
-        this.addingEdge = graph.addItem("edge", {
-          source: model.id,
-          target: model.id
-        });
-        this.startNode = node;
-        this.isAdding = true;
       }
     },
     onMousemove(ev) {

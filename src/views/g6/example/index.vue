@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="nodePanel">
+    <div class="asidePanel nodePanel">
       <div class="panelTitle">节点面板</div>
       <div class="panelContent">
         <el-collapse v-model="nodePanelExpandArr">
@@ -17,7 +17,6 @@
           </el-collapse-item>
         </el-collapse>
       </div>
-      <!--      <el-button type="primary" @click="refreshGraph">刷新</el-button>-->
     </div>
     <!-- 画板 -->
     <div id="graph" ref="graphRef" />
@@ -66,7 +65,14 @@ function initGraph() {
     width: window.innerWidth,
     height: window.innerHeight - 48,
     modes: {
-      default: ["drag-canvas", "zoom-canvas", "drag-node", "clickAddEdge"]
+      default: [
+        "drag-canvas",
+        "zoom-canvas",
+        "drag-node",
+        "clickAddEdge",
+        "nodeHover",
+        "edgeHover"
+      ]
     },
     defaultEdge: {
       type: "flowEdge",
@@ -74,7 +80,13 @@ function initGraph() {
         lineWidth: 2,
         stroke: "#bae7ff"
       }
-    }
+    },
+    // nodeStateStyles: {
+    //   selected: {
+    //     lineWidth: 2,
+    //     stroke: 'red'
+    //   },
+    // }
   });
   graph.value.data(graphData);
   graph.value.render();
@@ -105,10 +117,16 @@ function addNode(node, e) {
     title: node.nodeName,
     type: node.nodeType,
     x: point.x,
-    y: point.y
+    y: point.y,
+    // 连接点配置
+    anchorPoints: [
+      [0.5, 0],
+      [0.5, 1],
+      [0, 0.5],
+      [1, 0.5]
+    ]
   };
-  graphData.nodes.push(model);
-  graph.value.addItem("node", model, false);
+  graph.value.addItem("node", model);
 }
 
 // 注册边
@@ -130,7 +148,6 @@ function destroyListener() {
 onMounted(() => {
   initGraph();
   registerListener();
-  registerHoverBehavior();
 });
 onUnmounted(() => {
   destroyListener();
@@ -155,10 +172,8 @@ onUnmounted(() => {
   background-color: #fff;
 }
 
-.nodePanel {
+.asidePanel {
   position: absolute;
-  left: 10px;
-  top: 10px;
   width: 150px;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
   box-sizing: border-box;
@@ -172,7 +187,14 @@ onUnmounted(() => {
 
   .panelContent {
     padding: 10px;
+  }
+}
 
+.nodePanel {
+  left: 10px;
+  top: 10px;
+
+  .panelContent {
     :deep(.el-collapse-item__content) {
       padding-bottom: 0;
     }
