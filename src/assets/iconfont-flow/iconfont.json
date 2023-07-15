@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "7138006",
+      "name": "ios-git-merge",
+      "font_class": "ios-git-merge",
+      "unicode": "e7e4",
+      "unicode_decimal": 59364
+    },
+    {
+      "icon_id": "22032869",
+      "name": "build-outline",
+      "font_class": "build-outline",
+      "unicode": "e984",
+      "unicode_decimal": 59780
+    },
+    {
       "icon_id": "21823755",
       "name": "finished",
       "font_class": "finished",

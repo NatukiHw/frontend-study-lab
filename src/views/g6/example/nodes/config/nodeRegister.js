@@ -4,6 +4,8 @@ import { StartNodeConfig } from "./startNodeConfig";
 import { FinishNodeConfig } from "./finishNodeConfig";
 import { ExecScriptConfig } from "./execScriptConfig";
 import { DeployNodeConfig } from "./deployNodeConfig";
+import {PullCodeConfig} from "./pullCodeConfig";
+import {BuildProjectConfig} from "./buildProjectConfig";
 
 export const registerAllNode = () => {
   G6.registerNode(
@@ -24,6 +26,16 @@ export const registerAllNode = () => {
   G6.registerNode(
     DeployNodeConfig.type,
     DeployNodeConfig.config,
+    "single-node"
+  );
+  G6.registerNode(
+    PullCodeConfig.type,
+    PullCodeConfig.config,
+    "single-node"
+  );
+  G6.registerNode(
+    BuildProjectConfig.type,
+    BuildProjectConfig.config,
     "single-node"
   );
 };
@@ -69,6 +81,18 @@ export const nodeList = [
     key: "actionGroup",
     title: "动作节点",
     child: [
+      {
+        nodeName: "拉取代码",
+        nodeType: "pullCode",
+        nodeIcon: "icon-ios-git-merge",
+        nodeIconType: "iconfont"
+      },
+      {
+        nodeName: "构建项目",
+        nodeType: "buildProject",
+        nodeIcon: "icon-build-outline",
+        nodeIconType: "iconfont"
+      },
       {
         nodeName: "执行脚本",
         nodeType: "execScript",
