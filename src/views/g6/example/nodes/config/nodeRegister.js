@@ -29,24 +29,24 @@ export const registerAllNode = () => {
 };
 
 export const nodeList = [
-  {
-    key: "graphicGroup",
-    title: "图形节点",
-    child: [
-      {
-        nodeName: "圆形",
-        nodeType: "circle",
-        nodeIcon: "prime:circle",
-        nodeIconType: "iconfy"
-      },
-      {
-        nodeName: "矩形",
-        nodeType: "rect",
-        nodeIcon: "ph:rectangle-bold",
-        nodeIconType: "iconfy"
-      }
-    ]
-  },
+  // {
+  //   key: "graphicGroup",
+  //   title: "图形节点",
+  //   child: [
+  //     {
+  //       nodeName: "圆形",
+  //       nodeType: "circle",
+  //       nodeIcon: "prime:circle",
+  //       nodeIconType: "iconfy"
+  //     },
+  //     {
+  //       nodeName: "矩形",
+  //       nodeType: "rect",
+  //       nodeIcon: "ph:rectangle-bold",
+  //       nodeIconType: "iconfy"
+  //     }
+  //   ]
+  // },
   {
     key: "processGroup",
     title: "流程节点",
@@ -62,7 +62,13 @@ export const nodeList = [
         nodeType: "finishNode",
         nodeIcon: "icon-finished",
         nodeIconType: "iconfont"
-      },
+      }
+    ]
+  },
+  {
+    key: "actionGroup",
+    title: "动作节点",
+    child: [
       {
         nodeName: "执行脚本",
         nodeType: "execScript",

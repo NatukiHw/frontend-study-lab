@@ -17,6 +17,7 @@
           </el-collapse-item>
         </el-collapse>
       </div>
+      <!--      <el-button type="primary" @click="refreshGraph">刷新</el-button>-->
     </div>
     <!-- 画板 -->
     <div id="graph" ref="graphRef" />
@@ -24,11 +25,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
 import G6 from "@antv/g6";
+import { ref, onMounted, onUnmounted } from "vue";
+import { registerAllNode, nodeList } from "./nodes/config/nodeRegister";
+import { registerAllEdge } from "./edges/edgeRegister";
+import { registerAllBehavior } from "./behavior/behaviorRegister";
 
 const graphRef = ref(null); // 画布元素
-
 const graph = ref(null); // 画布实例
 
 // 数据
@@ -63,7 +66,7 @@ function initGraph() {
     width: window.innerWidth,
     height: window.innerHeight - 48,
     modes: {
-      default: ["drag-canvas", "zoom-canvas", "drag-node", "click-add-edge"]
+      default: ["drag-canvas", "zoom-canvas", "drag-node", "clickAddEdge"]
     },
     defaultEdge: {
       type: "flowEdge",
@@ -71,14 +74,6 @@ function initGraph() {
         lineWidth: 2,
         stroke: "#bae7ff"
       }
-    },
-    connecting: {
-      allowMulti: false,
-      allowLoop: false,
-      allowNode: true,
-      allowPort: true,
-      allowBlank: false,
-      allowEdge: false
     }
   });
   graph.value.data(graphData);
@@ -92,9 +87,8 @@ function resizeGraph() {
 }
 
 // 注册节点
-import { registerAllNode, nodeList } from "./nodes/config/nodeRegister";
-
 registerAllNode();
+
 // 默认展开所有节点组
 const nodePanelExpandArr = ref([]);
 for (const item of nodeList) {
@@ -107,78 +101,21 @@ function addNode(node, e) {
   const point = graph.value.getPointByClient(e.x, e.y);
   // 新创建的节点信息
   const model = {
-    id: `node${new Date().valueOf()}${parseInt(Math.random() * 1000)}`,
+    id: `node:${new Date().valueOf()}${parseInt(Math.random() * 1000)}`,
     title: node.nodeName,
     type: node.nodeType,
     x: point.x,
     y: point.y
   };
-  graphData.nodes.push(model)
+  graphData.nodes.push(model);
   graph.value.addItem("node", model, false);
 }
 
 // 注册边
-import { registerAllEdge } from "./edges/edgeRegister";
 registerAllEdge();
 
-// Register a custom behavior: click two end nodes to add an edge
-G6.registerBehavior("click-add-edge", {
-  // Set the events and the corresponding responsing function for this behavior
-  getEvents() {
-    return {
-      "node:click": "onClick", // The event is canvas:click, the responsing function is onClick
-      mousemove: "onMousemove", // The event is mousemove, the responsing function is onMousemove
-      "edge:click": "onEdgeClick" // The event is edge:click, the responsing function is onEdgeClick
-    };
-  },
-  // The responsing function for node:click defined in getEvents
-  onClick(ev) {
-    const self = this;
-    const node = ev.item;
-    const graph = self.graph;
-    // The position where the mouse clicks
-    const point = { x: ev.x, y: ev.y };
-    const model = node.getModel();
-    if (self.addingEdge && self.edge) {
-      if (model.in)
-      graph.updateItem(self.edge, {
-        target: model.id
-      });
-      console.log('edge', self.edge)
-      self.edge = null;
-      self.addingEdge = false;
-    } else {
-      // Add anew edge, the end node is the current node user clicks
-      self.edge = graph.addItem("edge", {
-        source: model.id,
-        target: model.id
-      });
-      self.addingEdge = true;
-    }
-  },
-  // The responsing function for mousemove defined in getEvents
-  onMousemove(ev) {
-    const self = this;
-    // The current position the mouse clicks
-    const point = { x: ev.x, y: ev.y };
-    if (self.addingEdge && self.edge) {
-      // Update the end node to the current node the mouse clicks
-      self.graph.updateItem(self.edge, {
-        target: point
-      });
-    }
-  },
-  // The responsing function for edge:click defined in getEvents
-  onEdgeClick(ev) {
-    const self = this;
-    const currentEdge = ev.item;
-    if (self.addingEdge && self.edge === currentEdge) {
-      self.graph.removeItem(self.edge);
-      self.edge = null;
-      self.addingEdge = false;
-    }
-  }
-});
+// 注册动作
+registerAllBehavior();
 
 // 注册监听器
 function registerListener() {
@@ -193,6 +130,7 @@ function destroyListener() {
 onMounted(() => {
   initGraph();
   registerListener();
+  registerHoverBehavior();
 });
 onUnmounted(() => {
   destroyListener();
@@ -235,7 +173,7 @@ onUnmounted(() => {
   .panelContent {
     padding: 10px;
 
-    ::v-deep .el-collapse-item__content {
+    :deep(.el-collapse-item__content) {
       padding-bottom: 0;
     }
 

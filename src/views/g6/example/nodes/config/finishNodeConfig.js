@@ -12,7 +12,8 @@ const node = {
           width: 200,
           height: 60,
           stroke: color,
-          radius: radius
+          radius: radius,
+          cursor: "pointer"
         },
         name: "main-box",
         draggable: true
@@ -25,7 +26,8 @@ const node = {
           width: 200,
           height: 20,
           fill: color,
-          radius: [radius, radius, 0, 0]
+          radius: [radius, radius, 0, 0],
+          cursor: "move"
         },
         name: "title-box",
         draggable: true
@@ -37,10 +39,10 @@ const node = {
           y: 20,
           width: 200,
           height: 40,
-          fill: "#fff"
+          fill: "#fff",
+          cursor: "pointer"
         },
-        name: "fill-content",
-        draggable: true
+        name: "fill-content"
       });
 
       // left icon
@@ -50,7 +52,6 @@ const node = {
           y: 2,
           height: 16,
           width: 16,
-          cursor: "pointer",
           img: ICON_URL
         },
         name: "node-icon"
