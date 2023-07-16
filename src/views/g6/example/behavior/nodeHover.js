@@ -12,23 +12,27 @@ const behavior = {
       const node = ev.item;
       const model = node.getModel()
       const group = node.getContainer();
+      const graph = this.graph
+      const selectedElement = graph.get('selectedElement');
       // 悬浮样式
-      const dashBorder = group.find(function(item) {
-        return item.get("name") === "dashBorder";
-      });
-      if (!dashBorder) {
-        group.addShape("rect", {
-          attrs: {
-            x: -5,
-            y: -5,
-            width: 209,
-            height: 69,
-            stroke: "#001529",
-            lineWidth: 2,
-            lineDash: [5]
-          },
-          name: "dashBorder"
+      if (!selectedElement || selectedElement.get('id') !== node.get('id')) {
+        const dashBorder = group.find(function(item) {
+          return item.get("name") === "dashBorder";
         });
+        if (!dashBorder) {
+          group.addShape("rect", {
+            attrs: {
+              x: -5,
+              y: -5,
+              width: 209,
+              height: 69,
+              stroke: "#001529",
+              lineWidth: 2,
+              lineDash: [5]
+            },
+            name: "dashBorder"
+          });
+        }
       }
       //连接点
       const CONNECTOR_OFFSET = -5
@@ -49,6 +53,7 @@ const behavior = {
             fill: "#ffffff",
             cursor: "pointer"
           },
+          zIndex: 10,
           name: "connector"
         });
       }
@@ -56,24 +61,27 @@ const behavior = {
     },
     onNodeNormal(ev) {
       const node = ev.item
+      const graph = this.graph
       if (this.hoverNode && this.hoverNode !== node) {
+        const selectedElement = graph.get('selectedElement');
         const group = this.hoverNode.getContainer();
         // 悬浮样式清除
-        const dashBorder = group.find(function(item) {
-          return item.get("name") === "dashBorder";
-        });
-        if (dashBorder) {
-          group.removeChild(dashBorder);
+        if (!selectedElement || selectedElement.get('id') !== this.hoverNode.get('id')) {
+          const dashBorder = group.find(function(item) {
+            return item.get("name") === "dashBorder";
+          });
+          if (dashBorder) {
+            group.removeChild(dashBorder);
+          }
         }
         // 移除连接点
-        let connector = group.find(function(item) {
+        const connectors = group.findAll(function(item) {
           return item.get("name") === "connector";
         });
-        while (connector) {
-          group.removeChild(connector)
-          connector = group.find(function(item) {
-            return item.get("name") === "connector";
-          });
+        if (connectors) {
+          for (const connector of connectors) {
+            group.removeChild(connector)
+          }
         }
         this.hoverNode = null;
       }

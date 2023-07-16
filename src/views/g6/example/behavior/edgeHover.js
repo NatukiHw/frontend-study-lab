@@ -11,6 +11,10 @@ const behavior = {
       const edge = ev.item;
       const model = edge.getModel();
       const graph = this.graph;
+      const selectedElement = graph.get('selectedElement');
+      if (selectedElement && selectedElement.get('id') === edge.get('id')) {
+        return
+      }
       // 边已有终点
       if (model && model.target && typeof model.target === "string") {
         graph.updateItem(edge, {
@@ -26,6 +30,10 @@ const behavior = {
       const edge = ev.item;
       const model = edge.getModel();
       const graph = this.graph;
+      const selectedElement = graph.get('selectedElement');
+      if (selectedElement && selectedElement.get('id') === edge.get('id')) {
+        return
+      }
       if (model && model.target && typeof model.target === "string") {
         graph.updateItem(edge, {
           // 节点的样式

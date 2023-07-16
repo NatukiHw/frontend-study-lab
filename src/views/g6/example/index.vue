@@ -29,6 +29,7 @@ import { ref, onMounted, onUnmounted } from "vue";
 import { registerAllNode, nodeList } from "./nodes/config/nodeRegister";
 import { registerAllEdge } from "./edges/edgeRegister";
 import { registerAllBehavior } from "./behavior/behaviorRegister";
+import { ElMessage } from "element-plus";
 
 const graphRef = ref(null); // 画布元素
 const graph = ref(null); // 画布实例
@@ -80,7 +81,7 @@ function initGraph() {
         lineWidth: 2,
         stroke: "#bae7ff"
       }
-    },
+    }
     // nodeStateStyles: {
     //   selected: {
     //     lineWidth: 2,
@@ -109,6 +110,17 @@ for (const item of nodeList) {
 
 // 添加节点
 function addNode(node, e) {
+  // 判断节点是否已达到上线
+  if (node.numLimit !== null || typeof node.numLimit !== "undefined") {
+    const arr = graph.value.findAll("node", (item) => {
+      const model = item.getModel();
+      return model && model.type === node.nodeType;
+    });
+    if (arr && arr.length >= node.numLimit) {
+      ElMessage.error(`[${node.nodeName}]节点数量已达到上限`);
+      return;
+    }
+  }
   // 将屏幕/页面坐标转换为渲染坐标
   const point = graph.value.getPointByClient(e.x, e.y);
   // 新创建的节点信息
@@ -124,7 +136,8 @@ function addNode(node, e) {
       [0.5, 1],
       [0, 0.5],
       [1, 0.5]
-    ]
+    ],
+    nodeDesc: node
   };
   graph.value.addItem("node", model);
 }
@@ -134,6 +147,90 @@ registerAllEdge();
 
 // 注册动作
 registerAllBehavior();
+const selectedElement = ref(null);
+
+function handleElementClick(ev) {
+  const element = ev.item;
+  if (!selectedElement.value) {
+    graph.value.set("selectedElement", element);
+    selectedElement.value = element;
+    setElementSelected(element);
+  } else if (selectedElement.value.get("id") === element.get("id")) {
+    clearElementSelected(element);
+    graph.value.set("selectedElement", null);
+    selectedElement.value = null;
+  } else {
+    clearElementSelected(selectedElement.value, true);
+    graph.value.set("selectedElement", element);
+    selectedElement.value = element;
+    setElementSelected(element);
+  }
+}
+
+function setElementSelected(element) {
+  const type = element.get("type");
+  const model = element.getModel();
+  const group = element.getContainer();
+  if (type === "node") {
+    const dashBorder = group.find(function(item) {
+      return item.get("name") === "dashBorder";
+    });
+    if (dashBorder) {
+      group.removeChild(dashBorder);
+    }
+    group.addShape("rect", {
+      attrs: {
+        x: -5,
+        y: -5,
+        width: 209,
+        height: 69,
+        stroke: "#326DE6",
+        lineWidth: 2,
+        lineDash: [5]
+      },
+      name: "dashBorder",
+      zIndex: 8
+    });
+    group.sort();
+  } else if (type === "edge") {
+    if (model && model.target && typeof model.target === "string") {
+      graph.value.updateItem(element, {
+        // 节点的样式
+        style: {
+          lineWidth: 4,
+          stroke: "#8db6cc"
+        }
+      });
+    }
+  }
+}
+
+function clearElementSelected(element, isRemoveBorder) {
+  const type = element.get("type");
+  const model = element.getModel();
+  const group = element.getContainer();
+  if (type === "node") {
+    const dashBorder = group.find(function(item) {
+      return item.get("name") === "dashBorder";
+    });
+    if (dashBorder) {
+      if (!isRemoveBorder) {
+        dashBorder.attr("stroke", "#001529");
+      } else {
+        group.removeChild(dashBorder);
+      }
+    }
+  } else if (type === "edge") {
+    if (model && model.target && typeof model.target === "string") {
+      graph.value.updateItem(element, {
+        style: {
+          lineWidth: 2,
+          stroke: "#bae7ff"
+        }
+      });
+    }
+  }
+}
 
 // 注册监听器
 function registerListener() {
@@ -148,6 +245,8 @@ function destroyListener() {
 onMounted(() => {
   initGraph();
   registerListener();
+  graph.value.on("node:click", handleElementClick);
+  graph.value.on("edge:click", handleElementClick);
 });
 onUnmounted(() => {
   destroyListener();

@@ -67,13 +67,17 @@ export const nodeList = [
         nodeName: "启动流程",
         nodeType: "startNode",
         nodeIcon: "icon-line_round_start",
-        nodeIconType: "iconfont"
+        nodeIconType: "iconfont",
+        numLimit: 1,
+        allowFrom: []
       },
       {
         nodeName: "结束流程",
         nodeType: "finishNode",
         nodeIcon: "icon-finished",
-        nodeIconType: "iconfont"
+        nodeIconType: "iconfont",
+        numLimit: 1,
+        allowTo: []
       }
     ]
   },

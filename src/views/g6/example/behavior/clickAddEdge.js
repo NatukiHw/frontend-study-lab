@@ -20,13 +20,17 @@ const behavior = {
       const graph = this.graph;
       const model = node.getModel();
       if (!this.isAdding) {
-        // 开始添加边
-        this.addingEdge = graph.addItem("edge", {
-          source: model.id,
-          target: model.id
-        });
-        this.startNode = node;
-        this.isAdding = true;
+        if (model && model.nodeDesc && model.nodeDesc.allowTo && model.nodeDesc.allowTo.length <= 0) {
+          ElMessage.error(`[${model.nodeDesc.nodeName}]节点无法作为边的起点`)
+        } else {
+          // 开始添加边
+          this.addingEdge = graph.addItem("edge", {
+            source: model.id,
+            target: model.id
+          });
+          this.startNode = node;
+          this.isAdding = true;
+        }
       }
       ev.stopPropagation()
     },
@@ -43,6 +47,8 @@ const behavior = {
         if (startNodeId === endNodeId) {
           // 不能为自己添加连线
           ElMessage.error("不能为自己添加连线");
+        } else if (model && model.nodeDesc && model.nodeDesc.allowFrom && model.nodeDesc.allowFrom.length <= 0) {
+          ElMessage.error(`[${model.nodeDesc.nodeName}]节点无法作为边的终点`)
         } else if (fromToEdge || toFromEdge) {
           // 两个节点间只能存在一条边
           ElMessage.error("不能重复添加连线");
